@@ -14,3 +14,4 @@ public class SignUpDto {
     @Size(min = 8 ,message = "Password should be atleast of 8 characters")
     private String password;
 }
+
