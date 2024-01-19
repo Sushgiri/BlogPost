@@ -27,6 +27,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 public class Doctordto {
+    private String doctorId;
     private String doctorName;
     private String specialization;
     private String qualification;
@@ -38,6 +39,8 @@ public class Doctordto {
     private  String location;
     private double rating;
     private Set<AvailableSlots> availableSlots;
+    private String readreview;
     private String review;
+    private  String book;
 
 }

@@ -16,34 +16,17 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class PostDto {
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    private   String id;
 
-    private   long id;
-
+    private String author;
     @NotEmpty
     @Size(min = 2, message = "Title should be atleast two character")
     private String title;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
      @NotEmpty
      @Size(min = 15 ,max = 100, message = "Description should contain atleast 15 charcters")
      private String description;
-
-    public String getDescription() {
-        return description;
-    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -51,23 +34,19 @@ public class PostDto {
    @NotEmpty
    @Size(min = 20, max = 400 ,message = "Content should be atleast 20 characters")
     private String content;
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+    private String datetime;
 
 
-    private String Message;
+    private  double rating;
+    private String comment;
 
-    public String getMessage() {
-        return Message;
-    }
 
-    public void setMessage(String message) {
-        Message = message;
-    }
+
+
+
+
+
+
+
+
 }

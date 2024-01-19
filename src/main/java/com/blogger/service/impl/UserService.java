@@ -62,6 +62,7 @@ public class UserService {
         user.setName(signUpDto.getName());
         user.setUsername(signUpDto.getUsername());
         user.setEmail(signUpDto.getEmail());
+        user.setLocation(signUpDto.getLocation());
         user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         user.setSignupdatetime(signupdatetime.toString());
         Role roles = roleRepository.findByName("ROLE_ADMIN").get();
@@ -74,38 +75,36 @@ public class UserService {
         if (byUsername == null) {
             return "There is no account with username  " + loginDto.getUsername() + "\n" + "Signup here  " + "http://localhost:8082/user/api/signup";
         }
-
         if (passwordEncoder.matches(loginDto.getPassword(), byUsername.getPassword())) {
-            return "welcome   " + byUsername.getName() + "\n" + "Search Doctors  " + "http://localhost:8082/user/api/search/doctor/" + byUsername.getId() + "\n" + "WRITE BLOG  " + "http://localhost:8082/user/blog/" + byUsername.getName();
+            return "welcome   " + byUsername.getName() + "\n" + "Search Doctors  " + "http://localhost:8082/user/api/search/doctor/" + byUsername.getId() + "\n" + "WRITE BLOG  " + "http://localhost:8082/user/blog/"+ byUsername.getUsername()+ "\n" +"READ BLOGS     " +"http://localhost:8082/user/blog/readallblogs/"+byUsername.getUsername()+ "\n" +"APPOINTMENTS    :"+"http://localhost:8082/user/booking/"+byUsername.getId();
         } else {
-            return "You have Entered Wrong Password" + "\n" + "FORGOT PASSWORD   RESET HERE  " + "http://localhost:8082/user/api/password/"+byUsername.getId();
+            return "You have Entered Wrong Password" + "\n" + "FORGOT PASSWORD   RESET HERE  " + "http://localhost:8082/user/api/password/"+byUsername.getId() ;
         }
     }
-
-    public List<User> getalluserrecentsignupsorted() {
+    public List<User> getallusers() {
         List<User> all = userRepository.findAll();
-        List<User> sorted = all.stream().sorted(Comparator.comparing(User::getSignupdatetime).reversed()).collect(Collectors.toList());
-        return sorted;
+       // List<User> sorted = all.stream().sorted(Comparator.comparing(User::getSignupdatetime).reversed()).collect(Collectors.toList());
+        return all;
     }
-
     public Doctorview searchdoctors(String userId) {
+        Optional<User> byId = userRepository.findById(userId);
         Doctordto[] doctorlist = restTemplate.getRestTemplate().getForObject("http://localhost:8081/doctor/api/all", Doctordto[].class);
         List<Doctordto> fetchedlist = Arrays.stream(doctorlist).collect(Collectors.toList());
-
+        List<String> bookingLinks = new ArrayList<>();
         for (Doctordto doctordtolist : doctorlist) {
             doctordtolist.setReview("http://localhost:8082/review/api/" + doctordtolist.getEmail() + "/" + userId);
+             doctordtolist.setReadreview("http://localhost:8082/review/api/"+doctordtolist.getDoctorId());
+            for(AvailableSlots availableSlots:doctordtolist.getAvailableSlots()){
+                availableSlots.setBook("http://localhost:8082/user/booking/"+doctordtolist.getDoctorId()+"/"+availableSlots.getDate()+"/"+byId.get().getId());
+            }
             fetchedlist.add(doctordtolist);
         }
         Set<Doctordto> returnset = new HashSet<>(fetchedlist);
-
         Doctorview doctorview = new Doctorview();
         doctorview.setDoctordtoList(returnset);
-
         return doctorview;
     }
-
     public String resetpassword(String userId, SignUpDto signUpDto) {
-
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundExcecption("Account Not Found with id:" + userId)
         );
@@ -121,7 +120,6 @@ public class UserService {
         }
         return "something went wrong password is not updated";
     }
-
     public String updaatpassword(String userId, LoginDto loginDto) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundExcecption("Account Not Found with id:" + userId)
@@ -140,12 +138,6 @@ public class UserService {
         return "password udpated";
     }
 }
-
-
-
-
-
-
 //        Role roles = roleRepository.findByName("ROLE_ADMIN").get();
 //        byUsername.setRoles(Collections.singleton(roles));
 //        userRepository.save(byUsername);

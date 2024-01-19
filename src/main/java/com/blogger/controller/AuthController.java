@@ -68,7 +68,7 @@ import java.util.List;
     }
     @GetMapping("/all/users")
     public ResponseEntity<?> getalluser(){
-        List<User> getalluser = userService.getalluserrecentsignupsorted();
+        List<User> getalluser = userService.getallusers();
         return new ResponseEntity<>(getalluser,HttpStatus.OK);
     }
     @GetMapping("/search/doctor/{userId}")
@@ -83,6 +83,8 @@ import java.util.List;
         String updaatpassword = userService.updaatpassword(userId, loginDto);
         return new ResponseEntity<>(updaatpassword,HttpStatus.OK);
     }
+
+
 
 //    @PostMapping("/signin")
 //    ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {

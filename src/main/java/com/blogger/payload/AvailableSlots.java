@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class AvailableSlots {
 
-    private String DoctorId;
+    private String book;
     private String date;
     private boolean morningSlot;
     private boolean afternoonSlots;
