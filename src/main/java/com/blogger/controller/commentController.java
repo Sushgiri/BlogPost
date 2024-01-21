@@ -26,7 +26,7 @@ public class commentController {
     public ResponseEntity<?> comment (@PathVariable String username, @PathVariable String postId, @RequestBody commentdto commentdto){
         User byUsername = userRepository.findByUsername(username);
         restTemplate.getRestTemplate().postForEntity("http://localhost:8084/api/comments/"+username+"/"+postId,commentdto,String.class);
-        Role roles = roleRepository.findByName("ROLE_ACTIVEUSER").get();
+        Role roles = roleRepository.findByName("ROLE_CUSTOMER").get();
         byUsername.getRoles().add(roles);
         userRepository.save(byUsername);
         return new ResponseEntity<>("Comment saved", HttpStatus.OK);

@@ -8,7 +8,7 @@ import com.blogger.exception.ResourceNotFoundExcecption;
 import com.blogger.payload.*;
 import com.blogger.repository.RoleRepository;
 import com.blogger.repository.UserRepository;
-import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.print.Doc;
@@ -39,7 +39,7 @@ public class UserService {
     @Autowired
     private RestemplateConfig restTemplate;
 
-    private ModelMapper modelMapper;
+
 //    private final UserDetailsService userDetailsService;
 //
 //    public UserService(UserDetailsService userDetailsService) {
@@ -76,10 +76,10 @@ public class UserService {
             return "There is no account with username  " + loginDto.getUsername() + "\n" + "Signup here  " + "http://localhost:8082/user/api/signup";
         }
         if (passwordEncoder.matches(loginDto.getPassword(), byUsername.getPassword())) {
-            return "welcome   " + byUsername.getName() + "\n" + "Search Doctors  " + "http://localhost:8082/user/api/search/doctor/" + byUsername.getId() + "\n" + "WRITE BLOG  " + "http://localhost:8082/user/blog/"+ byUsername.getUsername()+ "\n" +"READ BLOGS     " +"http://localhost:8082/user/blog/readallblogs/"+byUsername.getUsername()+ "\n" +"APPOINTMENTS    :"+"http://localhost:8082/user/booking/"+byUsername.getId();
-        } else {
-            return "You have Entered Wrong Password" + "\n" + "FORGOT PASSWORD   RESET HERE  " + "http://localhost:8082/user/api/password/"+byUsername.getId() ;
+            return "welcome   " + byUsername.getName() + "\n" + "Search Doctors  " + "http://localhost:8082/user/api/search/doctor/" + byUsername.getId() + "\n" + "WRITE BLOG  " + "http://localhost:8082/user/blog/"+ byUsername.getUsername()+ "\n" +"READ BLOGS     " +"http://localhost:8082/user/blog/readallblogs/"+byUsername.getUsername()+ "\n" +"APPOINTMENTS    :"+"http://localhost:8082/user/booking/"+byUsername.getId()+ "\n" + "Medicines     :"+"http://localhost:8082/user/medicine/"+byUsername.getId();
+
         }
+        return "You have Entered Wrong Password" + "\n" + "FORGOT PASSWORD   RESET HERE  " + "http://localhost:8082/user/api/password/"+byUsername.getId() ;
     }
     public List<User> getallusers() {
         List<User> all = userRepository.findAll();
