@@ -1,89 +1,76 @@
-//package com.blogger.config;
-//
-//import com.blogger.service.impl.CustomUserDetailsService;
-//import lombok.AllArgsConstructor;
-//import lombok.NoArgsConstructor;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//
-//import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-//import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-//import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//
-//@Configuration
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
-//@NoArgsConstructor
-//@AllArgsConstructor
-//public class SecurityConfig extends WebSecurityConfigurerAdapter {
-//    @Autowired
-//    private UserDetailsService userDetailsService;
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//    }
-//
-//
-//        @Override
-//        protected void configure(HttpSecurity http) throws Exception {
-//            http
-//                    .csrf().disable()
-//                    .authorizeRequests()
-//                    .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-//                    .antMatchers(HttpMethod.POST, "/api/**").permitAll()
-//                    .anyRequest()
-//                    .authenticated()
-//                    .and()
-//                    .httpBasic();
-//        }
-//        @Override
-//        @Bean
-//        protected UserDetailsService userDetailsService() {
-//            UserDetails user =
-//                    User.builder().username("pankaj").password(passwordEncoder()
-//                            .encode("password")).roles("USER").build();
-//            UserDetails admin =
-//                    User.builder().username("admin").password(passwordEncoder()
-//                            .encode("admin")).roles("ADMIN").build();
-//            return new InMemoryUserDetailsManager(user, admin);
-//        }
-//
-//
-//
-//
-//
-//    @Bean
-//    @Override
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
-//
-//
-//
-//
-//
-//}
+package com.blogger.config;
+
+import com.blogger.security.*;
+import com.blogger.service.impl.CustomUserDetailsService;
+
+import com.blogger.security.JwtAuthenticationEntryPoint;
+import com.blogger.security.JwtAuthenticationFilter;
+import com.blogger.security.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+  private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    private JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST,"user/api/signup").permitAll()
+                .antMatchers(HttpMethod.POST,"user/api/login").permitAll()
+                // ... your authorization configurations
+                .and()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .logout()
+                .logoutUrl("/user/api/logout")
+                .logoutSuccessHandler(jwtLogoutSuccessHandler)
+                .permitAll();
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}

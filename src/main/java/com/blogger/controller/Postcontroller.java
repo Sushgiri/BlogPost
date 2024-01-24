@@ -10,6 +10,7 @@ import com.blogger.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -42,6 +43,7 @@ public class Postcontroller {
         userRepository.save(user);
     }
     //http://localhost:8082/user/blog/readallblogs
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/readallblogs/{username}")
     public ResponseEntity<?> readallblogs(@PathVariable String username) {
         PostDto [] postDto = restTemplate.getRestTemplate().getForObject("http://localhost:8083/api/posts/all/posts", PostDto[].class);

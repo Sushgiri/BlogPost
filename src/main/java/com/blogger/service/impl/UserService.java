@@ -71,12 +71,12 @@ public class UserService {
     }
 
     public String login(LoginDto loginDto) {
-        User byUsername = userRepository.findByUsername(loginDto.getUsername());
+        User byUsername = userRepository.findByUsername(loginDto.getUsernameOrEmail());
         if (byUsername == null) {
-            return "There is no account with username  " + loginDto.getUsername() + "\n" + "Signup here  " + "http://localhost:8082/user/api/signup";
+            return "There is no account with username  " + loginDto.getUsernameOrEmail() + "\n" + "Signup here  " + "http://localhost:8082/user/api/signup";
         }
         if (passwordEncoder.matches(loginDto.getPassword(), byUsername.getPassword())) {
-            return "welcome   " + byUsername.getName() + "\n" + "Search Doctors  " + "http://localhost:8082/user/api/search/doctor/" + byUsername.getId() + "\n" + "WRITE BLOG  " + "http://localhost:8082/user/blog/"+ byUsername.getUsername()+ "\n" +"READ BLOGS     " +"http://localhost:8082/user/blog/readallblogs/"+byUsername.getUsername()+ "\n" +"APPOINTMENTS    :"+"http://localhost:8082/user/booking/"+byUsername.getId()+ "\n" + "Medicines     :"+"http://localhost:8082/user/medicine/"+byUsername.getId();
+            return "welcome   " + byUsername.getName() + "\n" + "Search Doctors  " + "http://localhost:8082/user/api/search/doctor/" + byUsername.getId() + "\n" + "WRITE BLOG  " + "http://localhost:8082/user/blog/"+ byUsername.getUsername()+ "\n" +"READ BLOGS     " +"http://localhost:8082/user/blog/readallblogs/"+byUsername.getUsername()+ "\n" +"APPOINTMENTS    :"+"http://localhost:8082/user/booking/"+byUsername.getId()+ "\n" + "Medicines     :"+"http://localhost:8082/user/medicine/"+byUsername.getId() + "\n" + "LOGOUT:http://localhost:8082/user/api/logout";
 
         }
         return "You have Entered Wrong Password" + "\n" + "FORGOT PASSWORD   RESET HERE  " + "http://localhost:8082/user/api/password/"+byUsername.getId() ;
