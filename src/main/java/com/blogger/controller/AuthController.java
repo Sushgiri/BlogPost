@@ -75,12 +75,7 @@ import java.util.List;
         List<User> getalluser = userService.getallusers();
         return new ResponseEntity<>(getalluser,HttpStatus.OK);
     }
-    @GetMapping("/search/doctor/{userId}")
-    public ResponseEntity<?> searchdoctos(@PathVariable String userId){
-        Doctorview searchdoctors = userService.searchdoctors(userId);
-        return new ResponseEntity<>(searchdoctors,HttpStatus.OK);
 
-    }
 //http://localhost:8082/user/api/password/
     @PutMapping("/password/{userId}")
     public ResponseEntity<?> updatepassword(@PathVariable String userId, @RequestBody LoginDto loginDto){

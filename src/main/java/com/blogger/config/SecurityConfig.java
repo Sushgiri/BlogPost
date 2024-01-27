@@ -57,6 +57,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"user/api/signup").permitAll()
                 .antMatchers(HttpMethod.POST,"user/api/login").permitAll()
                 // ... your authorization configurations
+                .antMatchers("/user/blog/**").authenticated()
+                .antMatchers("/user/booking/**").authenticated()
+                .antMatchers("/user/medicine/**").authenticated()
+                .antMatchers("/user/doctor/**").authenticated()
+
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
