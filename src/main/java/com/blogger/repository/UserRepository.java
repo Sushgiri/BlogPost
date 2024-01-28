@@ -1,6 +1,7 @@
 package com.blogger.repository;
 
 import com.blogger.entity.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

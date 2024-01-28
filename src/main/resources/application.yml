@@ -32,6 +32,12 @@ eureka:
             exposure:
               include: health
 
+
+  cloud:
+    loadbalancer:
+      ribbon:
+        eureka:
+          enabled: true
         endpoint:
           health:
             show-details: always
@@ -49,7 +55,7 @@ eureka:
               permittedNumberOfCallsInHalfOpenState: 3
               slidingWindowSize: 10
               slidingWindowType: COUNT_BASED
-           commentBreaker:
+           doctorBreaker:
               registerHealthIndicator: true
               eventConsumerBufferSize: 10
               failureRateThreshold: 50
@@ -59,3 +65,33 @@ eureka:
               permittedNumberOfCallsInHalfOpenState: 3
               slidingWindowSize: 10
               slidingWindowType: COUNT_BASED
+              medicineBreaker:
+                registerHealthIndicator: true
+                eventConsumerBufferSize: 10
+                failureRateThreshold: 50
+                minimumNumberOfCalls: 5
+                automaticTransitionFromOpenToHalfOpenEnabled: true
+                waitDurationInOpenState: 6s
+                permittedNumberOfCallsInHalfOpenState: 3
+                slidingWindowSize: 10
+                slidingWindowType: COUNT_BASED
+              bookingBreaker:
+                registerHealthIndicator: true
+                eventConsumerBufferSize: 10
+                failureRateThreshold: 50
+                minimumNumberOfCalls: 5
+                automaticTransitionFromOpenToHalfOpenEnabled: true
+                waitDurationInOpenState: 6s
+                permittedNumberOfCallsInHalfOpenState: 3
+                slidingWindowSize: 10
+                slidingWindowType: COUNT_BASED
+                reviewBreaker:
+                  registerHealthIndicator: true
+                  eventConsumerBufferSize: 10
+                  failureRateThreshold: 50
+                  minimumNumberOfCalls: 5
+                  automaticTransitionFromOpenToHalfOpenEnabled: true
+                  waitDurationInOpenState: 6s
+                  permittedNumberOfCallsInHalfOpenState: 3
+                  slidingWindowSize: 10
+                  slidingWindowType: COUNT_BASED

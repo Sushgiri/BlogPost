@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 
 public class orderdot {
 
-
-
     @JsonProperty
     private int quantity;
-    @JsonProperty
-    private boolean paid;
+
 }

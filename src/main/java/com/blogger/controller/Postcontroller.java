@@ -7,6 +7,7 @@ import com.blogger.payload.PostDto;
 import com.blogger.repository.RoleRepository;
 import com.blogger.repository.UserRepository;
 import com.blogger.service.impl.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class Postcontroller {
     private RestemplateConfig restTemplate;
 
     @PostMapping("/{username}")
+    @CircuitBreaker(name = "postBreaker", fallbackMethod = "postFallback")
     public ResponseEntity<?> writeblog(@PathVariable String username, @RequestBody PostDto postDto) {
         User byUsername = userRepository.findByUsername(username);
         restTemplate.getRestTemplate().postForEntity("http://localhost:8083/api/posts/" + byUsername.getUsername(), postDto, String.class);
@@ -45,6 +47,7 @@ public class Postcontroller {
     //http://localhost:8082/user/blog/readallblogs
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/readallblogs/{username}")
+    @CircuitBreaker(name = "postBreaker", fallbackMethod = "postFallback")
     public ResponseEntity<?> readallblogs(@PathVariable String username) {
         PostDto [] postDto = restTemplate.getRestTemplate().getForObject("http://localhost:8083/api/posts/all/posts", PostDto[].class);
        List<PostDto> returndto =  Arrays.stream(postDto).collect(Collectors.toList());
@@ -56,4 +59,18 @@ public class Postcontroller {
         Set<PostDto> returdto = new HashSet<>(showdto);
         return new ResponseEntity<>(returdto, HttpStatus.OK);
     }
+    public ResponseEntity<PostDto> postFallback(String username, Exception ex) {
+        System.out.println("Fallback is executed because service is down : "+ ex.getMessage());
+
+        ex.printStackTrace();
+
+        PostDto dto = new PostDto();
+
+        dto.setTitle("Post Down");
+        dto.setContent("Post Down");
+        dto.setDescription("Post Down");
+
+        return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
+    }
+
 }
